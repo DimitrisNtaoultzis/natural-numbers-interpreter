@@ -1,0 +1,17 @@
+#Python cache
+__pycache__/
+*.pyc
+
+#Virtual environment
+env/
+venv/
+.venv/
+
+#PDF
+*.pdf
+
+#Pytest cache
+.pytest_cache/
+
+#VS Code
+.vscode/
