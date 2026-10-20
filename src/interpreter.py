@@ -21,3 +21,11 @@ def parse_input(text: str) -> list[str]:
             )
 
     return tokens
+
+
+def is_valid_greek_phone(number: str) -> bool:
+    """Valid Greek numbers: 10 digits starting with 2 or 69, or 14 digits starting with 00302 or 003069"""
+
+    return (number.startswith(("2", "69")) and len(number) == 10) or (
+        number.startswith(("00302", "003069")) and len(number) == 14
+    )
