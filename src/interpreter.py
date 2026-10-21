@@ -89,3 +89,31 @@ def group_value(tokens: list[str]) -> str | None:
     if not is_valid:
         return None
     return str(sum(int(token) for token in tokens))
+
+
+def _interpret_from(tokens: list[str], start: int) -> list[str]:
+    """Return every interpretation of tokens[start:], duplicates included"""
+    if start == len(tokens):
+        return [""]
+
+    results = []
+    for size in (1, 2, 3):
+        group = tokens[start : start + size]
+        if len(group) < size:
+            break
+        value = group[0] if size == 1 else group_value(group)
+        if value is None:
+            continue
+        rest_options = _interpret_from(tokens, start + size)
+        for form in spoken_forms(value):
+            for rest in rest_options:
+                results.append(form + rest)
+    return results
+
+
+def interpretations(tokens: list[str]) -> list[str]:
+    """Return every distinct number the tokens could represent
+
+    The literal reading (tokens joined as they are) comes first
+    """
+    return list(dict.fromkeys(_interpret_from(tokens, 0)))
