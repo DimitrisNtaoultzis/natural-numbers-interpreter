@@ -52,3 +52,40 @@ def spoken_forms(token: str) -> list[str]:
     if rest.startswith("0"):
         return [token, hundreds + "00" + rest[1]]
     return [token] + [hundreds + "00" + form for form in spoken_forms(rest)]
+
+
+def is_unit(token: str) -> bool:
+    return len(token) == 1 and token != "0"
+
+
+def is_round_tens(token: str) -> bool:
+    return len(token) == 2 and token[0] in "23456789" and token[1] == "0"
+
+
+def is_round_hundreds(token: str) -> bool:
+    return len(token) == 3 and token[0] != "0" and token[1:] == "00"
+
+
+def is_below_hundred(token: str) -> bool:
+    return len(token) <= 2 and not token.startswith("0")
+
+
+def group_value(tokens: list[str]) -> str | None:
+    """Return the value of tokens that form one spoken number, else None
+
+    Valid groups: "30 6" -> "36", "700 24" -> "724", "700 20 4" -> "724"
+    """
+    if len(tokens) == 2:
+        first, second = tokens
+        is_valid = (is_round_tens(first) and is_unit(second)) or (
+            is_round_hundreds(first) and is_below_hundred(second)
+        )
+    elif len(tokens) == 3:
+        first, second, third = tokens
+        is_valid = is_round_hundreds(first) and is_round_tens(second) and is_unit(third)
+    else:
+        is_valid = False
+
+    if not is_valid:
+        return None
+    return str(sum(int(token) for token in tokens))
