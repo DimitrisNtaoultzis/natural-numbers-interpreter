@@ -29,3 +29,26 @@ def is_valid_greek_phone(number: str) -> bool:
     return (number.startswith(("2", "69")) and len(number) == 10) or (
         number.startswith(("00302", "003069")) and len(number) == 14
     )
+
+
+def spoken_forms(token: str) -> list[str]:
+    """Return every way a spoken number could have been written down
+
+    The token itself comes first. A number like "724" (seven hundred twenty four)
+    may also be written as "70024" or "700204"
+    """
+    if len(token) == 1 or token.startswith("0"):
+        return [token]
+
+    if len(token) == 2:
+        tens, unit = token
+        if tens == "1" or unit == "0":
+            return [token]
+        return [token, tens + "0" + unit]
+
+    hundreds, rest = token[0], token[1:]
+    if rest == "00":
+        return [token]
+    if rest.startswith("0"):
+        return [token, hundreds + "00" + rest[1]]
+    return [token] + [hundreds + "00" + form for form in spoken_forms(rest)]
